@@ -49,7 +49,7 @@ export default function Home() {
           TCG Print Master
         </h1>
         <p className="text-lg text-zinc-600 dark:text-zinc-400">
-          あなたのAIアートを、ポケモンカードのサイズ (63×88mm) で完璧に印刷。
+          あなたのAIアートを、実物カードサイズ (63×88mm) で完璧に印刷。
         </p>
       </header>
 
