@@ -42,12 +42,22 @@ export default function Home() {
     setGrid(newGrid);
   };
 
-  const handleDownload = () => {
-    // We need to update pdf-generator to accept the grid
-    // For now we pass the grid to the generator (which we will update next)
-    // @ts-ignore - Temporary ignore until we update the function signature
-    const doc = generateTCGPdf(grid, { enableSpacing, enableCropMarks });
-    downloadPdf(doc, 'tcg-layout.pdf');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      setIsGenerating(true);
+      // We need to update pdf-generator to accept the grid
+      // For now we pass the grid to the generator (which we will update next)
+      // @ts-ignore - Temporary ignore until we update the function signature
+      const doc = await generateTCGPdf(grid, { enableSpacing, enableCropMarks });
+      downloadPdf(doc, 'tcg-layout.pdf');
+    } catch (error) {
+      console.error("Failed to generate PDF", error);
+      alert("PDF作成に失敗しました。");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const clearAll = () => {
@@ -175,11 +185,15 @@ export default function Home() {
 
               <button
                 onClick={handleDownload}
-                disabled={grid.every(s => s === null)}
+                disabled={isGenerating || grid.every(s => s === null)}
                 className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                <Download className="w-5 h-5" />
-                PDF作成
+                {isGenerating ? (
+                  <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Download className="w-5 h-5" />
+                )}
+                {isGenerating ? '作成中...' : 'PDF作成'}
               </button>
 
               {/* Options */}

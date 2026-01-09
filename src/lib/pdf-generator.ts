@@ -13,10 +13,10 @@ interface PdfOptions {
     enableCropMarks: boolean;
 }
 
-export const generateTCGPdf = (
+export const generateTCGPdf = async (
     grid: (string | null)[],
     options: PdfOptions = { enableSpacing: true, enableCropMarks: true }
-): jsPDF => {
+): Promise<jsPDF> => {
     // Orientation 'p' (portrait), unit 'mm', format 'a4'
     const doc = new jsPDF({
         orientation: "p",
@@ -38,8 +38,10 @@ export const generateTCGPdf = (
     const startX = (A4_WIDTH - totalGridWidth) / 2;
     const startY = (A4_HEIGHT - totalGridHeight) / 2;
 
-    grid.forEach((imageSrc, index) => {
-        if (!imageSrc) return;
+    // Process images sequentially to avoid memory spikes
+    for (let index = 0; index < grid.length; index++) {
+        const imageSrc = grid[index];
+        if (!imageSrc) continue;
 
         const col = index % 3;
         const row = Math.floor(index / 3);
@@ -49,7 +51,8 @@ export const generateTCGPdf = (
 
         // Add the image
         try {
-            doc.addImage(imageSrc, 'PNG', x, y, CARD_WIDTH, CARD_HEIGHT);
+            const processedImage = await processImageForPdf(imageSrc);
+            doc.addImage(processedImage, 'JPEG', x, y, CARD_WIDTH, CARD_HEIGHT);
         } catch (e) {
             console.error("Error adding image to PDF", e);
         }
@@ -58,9 +61,51 @@ export const generateTCGPdf = (
         if (options.enableCropMarks) {
             drawCropMarks(doc, x, y);
         }
-    });
+    }
 
     return doc;
+};
+
+// Helper: Resize and compress image
+const processImageForPdf = (src: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            // Target 600 DPI for 63mm x 88mm
+            // 1 inch = 25.4mm
+            // Width: (63 / 25.4) * 600 ≈ 1488
+            // Height: (88 / 25.4) * 600 ≈ 2079
+            const targetWidth = 1488;
+            const targetHeight = 2079;
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                reject(new Error("Failed to get canvas context"));
+                return;
+            }
+
+            // High quality resizing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // Fill white background to handle transparency
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+            // Convert to JPEG with 0.85 quality
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            resolve(dataUrl);
+        };
+        img.onerror = reject;
+        img.src = src;
+    });
 };
 
 const drawCropMarks = (doc: jsPDF, x: number, y: number) => {
