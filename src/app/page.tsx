@@ -105,7 +105,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-auto pt-12 text-center text-sm text-zinc-400 dark:text-zinc-600">
-        <p>© 2024 TCG Print Master. Local Client-Side Processing Only.</p>
+        <p>© 2026 TCG Print Master. Local Client-Side Processing Only.</p>
       </footer>
     </div>
   );
