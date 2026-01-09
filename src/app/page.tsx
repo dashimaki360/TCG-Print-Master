@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ImageUploader } from '@/components/image-uploader';
 import { generateTCGPdf, downloadPdf } from '@/lib/pdf-generator';
-import { Download, RotateCcw, Sparkles, Plus, X, Trash2 } from 'lucide-react';
+import { Download, RotateCcw, Plus, X, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Home() {
@@ -73,9 +73,7 @@ export default function Home() {
       {/* Header */}
       <header className="flex flex-col items-center gap-4 text-center max-w-2xl mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center p-2 bg-blue-500/10 rounded-full">
-            <Sparkles className="w-5 h-5 text-blue-600" />
-          </div>
+
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-800">
             TCG Print Master
           </h1>
