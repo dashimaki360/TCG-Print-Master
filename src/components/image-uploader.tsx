@@ -42,7 +42,7 @@ export function ImageUploader({ onImageSelect, className }: ImageUploaderProps) 
                 "relative flex flex-col items-center justify-center w-full max-w-xl p-12 border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer group",
                 isDragActive
                     ? "border-blue-500 bg-blue-50/10 scale-[1.02]"
-                    : "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 bg-zinc-50/5 dark:bg-zinc-900/50",
+                    : "border-zinc-300 hover:border-zinc-400 bg-zinc-50/5",
                 className
             )}
         >
@@ -51,7 +51,7 @@ export function ImageUploader({ onImageSelect, className }: ImageUploaderProps) 
             <div className="flex flex-col items-center text-center gap-4">
                 <div className={cn(
                     "p-4 rounded-full transition-colors duration-300",
-                    isDragActive ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700"
+                    isDragActive ? "bg-blue-100 text-blue-600" : "bg-zinc-100 text-zinc-500 group-hover:bg-zinc-200"
                 )}>
                     {isDragActive ? (
                         <Upload className="w-8 h-8" />
@@ -61,15 +61,15 @@ export function ImageUploader({ onImageSelect, className }: ImageUploaderProps) 
                 </div>
 
                 <div className="space-y-1">
-                    <p className="text-lg font-medium text-zinc-700 dark:text-zinc-200">
+                    <p className="text-lg font-medium text-zinc-700">
                         {isDragActive ? "ドロップしてアップロード" : "画像をアップロード"}
                     </p>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="text-sm text-zinc-500">
                         ドラッグ＆ドロップ または クリックして選択
                     </p>
                 </div>
 
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
+                <p className="text-xs text-zinc-400 mt-2">
                     PNG, JPG, WEBP (最大 10MB)
                 </p>
             </div>

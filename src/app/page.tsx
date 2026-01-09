@@ -73,10 +73,10 @@ export default function Home() {
       {/* Header */}
       <header className="flex flex-col items-center gap-4 text-center max-w-2xl mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center p-2 bg-blue-500/10 dark:bg-blue-500/20 rounded-full">
-            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="flex items-center justify-center p-2 bg-blue-500/10 rounded-full">
+            <Sparkles className="w-5 h-5 text-blue-600" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-800">
             TCG Print Master
           </h1>
         </div>
@@ -88,8 +88,8 @@ export default function Home() {
 
           {/* Left Column: Library */}
           <div className="lg:col-span-3 flex flex-col gap-4">
-            <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm h-full max-h-[calc(100vh-200px)] overflow-y-auto">
-              <h3 className="font-bold text-zinc-700 dark:text-zinc-200 mb-4 flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm h-full max-h-[calc(100vh-200px)] overflow-y-auto">
+              <h3 className="font-bold text-zinc-700 mb-4 flex items-center justify-between">
                 ライブラリ
                 <span className="text-xs font-normal text-zinc-500">{library.length}枚</span>
               </h3>
@@ -123,7 +123,7 @@ export default function Home() {
 
           {/* Center: A4 Grid Preview */}
           <div className="lg:col-span-6 flex flex-col items-center gap-4">
-            <div className="bg-zinc-100 dark:bg-zinc-900 p-8 rounded-xl shadow-inner overflow-auto max-w-full">
+            <div className="bg-zinc-100 p-8 rounded-xl shadow-inner overflow-auto max-w-full">
               {/* A4 Container (Scaled down CSS representation) */}
               {/* A4 is 210mm x 297mm. 3x3 grid. Card 63x88mm. */}
               {/* We use a relative container with fixed aspect ratio A4 */}
@@ -175,9 +175,9 @@ export default function Home() {
 
           {/* Right Column: Actions */}
           <div className="lg:col-span-3 flex flex-col gap-4">
-            <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm space-y-6">
+            <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm space-y-6">
               <div>
-                <h3 className="font-bold text-zinc-800 dark:text-zinc-100 mb-2">アクション</h3>
+                <h3 className="font-bold text-zinc-800 mb-2">アクション</h3>
                 <p className="text-sm text-zinc-500">
                   設定を確認してPDFを出力します。
                 </p>
@@ -198,41 +198,41 @@ export default function Home() {
 
               {/* Options */}
               <div className="space-y-3">
-                <label className="flex items-center gap-3 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-lg border border-zinc-200 cursor-pointer hover:bg-zinc-50 transition-colors">
                   <input
                     type="checkbox"
                     checked={enableSpacing}
                     onChange={(e) => setEnableSpacing(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">隙間あり (5mm)</span>
+                  <span className="text-sm font-medium text-zinc-700">隙間あり (5mm)</span>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-lg border border-zinc-200 cursor-pointer hover:bg-zinc-50 transition-colors">
                   <input
                     type="checkbox"
                     checked={enableCropMarks}
                     onChange={(e) => setEnableCropMarks(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">トンボ (切り取り線)</span>
+                  <span className="text-sm font-medium text-zinc-700">トンボ (切り取り線)</span>
                 </label>
               </div>
 
-              <div className="h-px bg-zinc-100 dark:bg-zinc-700" />
+              <div className="h-px bg-zinc-100" />
 
               <button
                 onClick={clearAll}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-800 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 text-zinc-600 dark:text-zinc-300 rounded-lg font-medium transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-zinc-100 hover:bg-red-50 hover:text-red-500 text-zinc-600 rounded-lg font-medium transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
                 リセット
               </button>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800/50">
-              <h4 className="font-bold text-blue-700 dark:text-blue-300 text-sm mb-1">ヒント</h4>
-              <ul className="text-xs text-blue-600/80 dark:text-blue-400/80 space-y-1 ml-4 list-disc">
+            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+              <h4 className="font-bold text-blue-700 text-sm mb-1">ヒント</h4>
+              <ul className="text-xs text-blue-600/80 space-y-1 ml-4 list-disc">
                 <li>同じ画像を複数の場所に配置できます。</li>
                 <li>配置済みの画像をクリックすると上書きされます。</li>
                 <li>A4用紙（100%）で印刷してください。</li>
@@ -243,7 +243,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="mt-auto pt-12 pb-4 text-center text-xs text-zinc-400 dark:text-zinc-600">
+      <footer className="mt-auto pt-12 pb-4 text-center text-xs text-zinc-400">
         <p>© 2026 TCG Print Master. Local Client-Side Processing Only.</p>
       </footer>
     </div>
