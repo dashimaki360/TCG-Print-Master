@@ -2,38 +2,21 @@
 
 import React, { useState } from 'react';
 import { ImageUploader } from '@/components/image-uploader';
-import { ImageCropper } from '@/components/image-cropper';
 import { generateTCGPdf, downloadPdf } from '@/lib/pdf-generator';
-import { ArrowLeft, Download, RotateCcw, Printer, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils'; // Ensure utils is imported
+import { Download, RotateCcw, Sparkles } from 'lucide-react';
 
 export default function Home() {
-  const [step, setStep] = useState<'upload' | 'crop' | 'preview'>('upload');
+  const [step, setStep] = useState<'upload' | 'preview'>('upload');
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [croppedImage, setCroppedImage] = useState<string | null>(null);
 
   const handleImageSelect = (src: string) => {
     setImageSrc(src);
-    setStep('crop');
-  };
-
-  const handleCropComplete = (cropped: string) => {
-    setCroppedImage(cropped);
     setStep('preview');
   };
 
-  const handleBack = () => {
-    if (step === 'crop') {
-      setStep('upload');
-      setImageSrc(null);
-    } else if (step === 'preview') {
-      setStep('crop');
-    }
-  };
-
   const handleDownload = () => {
-    if (croppedImage) {
-      const doc = generateTCGPdf(croppedImage);
+    if (imageSrc) {
+      const doc = generateTCGPdf(imageSrc);
       downloadPdf(doc, 'my-tcg-card.pdf');
     }
   };
@@ -61,25 +44,7 @@ export default function Home() {
           </div>
         )}
 
-        {step === 'crop' && imageSrc && (
-          <div className="w-full flex flex-col items-center gap-4 animate-in zoom-in-95 duration-500">
-            <div className="w-full max-w-4xl flex justify-start">
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" /> 戻る
-              </button>
-            </div>
-            <ImageCropper
-              imageSrc={imageSrc}
-              onCropComplete={handleCropComplete}
-              onCancel={handleBack}
-            />
-          </div>
-        )}
-
-        {step === 'preview' && croppedImage && (
+        {step === 'preview' && imageSrc && (
           <div className="w-full flex flex-col items-center gap-8 animate-in zoom-in-95 duration-500">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">準備完了！</h2>
@@ -95,14 +60,14 @@ export default function Home() {
                 <div className="relative bg-white dark:bg-zinc-800 p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-xl">
                   {/* Display at roughly real physical size on screen or just visually pleasing size */}
                   <img
-                    src={croppedImage}
+                    src={imageSrc}
                     alt="Card Preview"
-                    className="w-[240px] h-auto rounded-lg shadow-inner"
+                    className="w-[240px] h-auto rounded-lg shadow-inner object-cover"
                     style={{ aspectRatio: '63/88' }}
                   />
                 </div>
                 <p className="mt-4 text-center text-sm font-medium text-zinc-500">
-                  印刷サイズ: 63mm × 88mm
+                  印刷サイズ: 63mm × 88mm (自動リサイズ)
                 </p>
               </div>
 
@@ -126,7 +91,6 @@ export default function Home() {
                   onClick={() => {
                     setStep('upload');
                     setImageSrc(null);
-                    setCroppedImage(null);
                   }}
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-lg font-medium transition-colors"
                 >
