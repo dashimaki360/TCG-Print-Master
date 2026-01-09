@@ -22,10 +22,8 @@ export default function Home() {
 
   const handleImageSelect = (src: string) => {
     setLibrary([...library, src]);
-    // If it's the first image, automatically select it for convenience
-    if (library.length === 0) {
-      setSelectedLibraryIndex(0);
-    }
+    // Automatically select the newly added image
+    setSelectedLibraryIndex(library.length);
   };
 
   const handleGridClick = (index: number) => {
