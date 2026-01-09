@@ -2,10 +2,21 @@ import { jsPDF } from "jspdf";
 
 const CARD_WIDTH = 63; // mm
 const CARD_HEIGHT = 88; // mm
+const DEFAULT_CARD_GAP = 5; // mm
 const A4_WIDTH = 210; // mm
 const A4_HEIGHT = 297; // mm
+const MARK_LENGTH = 3; // mm
+const LINE_WIDTH = 0.1; // mm
 
-export const generateTCGPdf = (imageSrc: string): jsPDF => {
+interface PdfOptions {
+    enableSpacing: boolean;
+    enableCropMarks: boolean;
+}
+
+export const generateTCGPdf = (
+    grid: (string | null)[],
+    options: PdfOptions = { enableSpacing: true, enableCropMarks: true }
+): jsPDF => {
     // Orientation 'p' (portrait), unit 'mm', format 'a4'
     const doc = new jsPDF({
         orientation: "p",
@@ -13,47 +24,63 @@ export const generateTCGPdf = (imageSrc: string): jsPDF => {
         format: "a4",
     });
 
-    // Calculate center position
-    const x = (A4_WIDTH - CARD_WIDTH) / 2;
-    const y = (A4_HEIGHT - CARD_HEIGHT) / 2;
-
-    // Add the image
-    // 'PNG' or 'JPEG' depending on the source. dataURL usually has the type.
-    // We'll trust jsPDF to detect format from dataURL if possible, or force PNG if ours is PNG.
-    // buffer from crop-image is PNG.
-    doc.addImage(imageSrc, 'PNG', x, y, CARD_WIDTH, CARD_HEIGHT);
-
-    // Add Crop Marks (Tonbo)
-    // Simple corner marks
-    const markLength = 3; // 3mm lines
-    const lineWidth = 0.1; // Thin lines
-
-    doc.setLineWidth(lineWidth);
+    doc.setLineWidth(LINE_WIDTH);
     doc.setDrawColor(0, 0, 0); // Black
 
-    // Top Left
-    // Horizontal line
-    doc.line(x - markLength, y, x, y);
-    // Vertical line
-    doc.line(x, y - markLength, x, y);
+    const cardGap = options.enableSpacing ? DEFAULT_CARD_GAP : 0;
 
-    // Top Right
-    doc.line(x + CARD_WIDTH, y, x + CARD_WIDTH + markLength, y);
-    doc.line(x + CARD_WIDTH, y - markLength, x + CARD_WIDTH, y);
+    // Calculate grid start position to center the block of 3x3
+    // Total Grid Width = (3 * 63) + (2 * gap)
+    // Total Grid Height = (3 * 88) + (2 * gap)
+    const totalGridWidth = (CARD_WIDTH * 3) + (cardGap * 2);
+    const totalGridHeight = (CARD_HEIGHT * 3) + (cardGap * 2);
 
-    // Bottom Left
-    doc.line(x - markLength, y + CARD_HEIGHT, x, y + CARD_HEIGHT);
-    doc.line(x, y + CARD_HEIGHT, x, y + CARD_HEIGHT + markLength);
+    const startX = (A4_WIDTH - totalGridWidth) / 2;
+    const startY = (A4_HEIGHT - totalGridHeight) / 2;
 
-    // Bottom Right
-    doc.line(x + CARD_WIDTH, y + CARD_HEIGHT, x + CARD_WIDTH + markLength, y + CARD_HEIGHT);
-    doc.line(x + CARD_WIDTH, y + CARD_HEIGHT, x + CARD_WIDTH, y + CARD_HEIGHT + markLength);
+    grid.forEach((imageSrc, index) => {
+        if (!imageSrc) return;
 
-    // Optional: Add a very light gray rect to show the A4 bounds if checking on screen? No, keep it clean for print.
+        const col = index % 3;
+        const row = Math.floor(index / 3);
+
+        const x = startX + (col * (CARD_WIDTH + cardGap));
+        const y = startY + (row * (CARD_HEIGHT + cardGap));
+
+        // Add the image
+        try {
+            doc.addImage(imageSrc, 'PNG', x, y, CARD_WIDTH, CARD_HEIGHT);
+        } catch (e) {
+            console.error("Error adding image to PDF", e);
+        }
+
+        // Add Crop Marks for this card if enabled
+        if (options.enableCropMarks) {
+            drawCropMarks(doc, x, y);
+        }
+    });
 
     return doc;
 };
 
-export const downloadPdf = (doc: jsPDF, filename = "tcg-card.pdf") => {
+const drawCropMarks = (doc: jsPDF, x: number, y: number) => {
+    // Top Left
+    doc.line(x - MARK_LENGTH, y, x, y); // Horizontal
+    doc.line(x, y - MARK_LENGTH, x, y); // Vertical
+
+    // Top Right
+    doc.line(x + CARD_WIDTH, y, x + CARD_WIDTH + MARK_LENGTH, y);
+    doc.line(x + CARD_WIDTH, y - MARK_LENGTH, x + CARD_WIDTH, y);
+
+    // Bottom Left
+    doc.line(x - MARK_LENGTH, y + CARD_HEIGHT, x, y + CARD_HEIGHT);
+    doc.line(x, y + CARD_HEIGHT, x, y + CARD_HEIGHT + MARK_LENGTH);
+
+    // Bottom Right
+    doc.line(x + CARD_WIDTH, y + CARD_HEIGHT, x + CARD_WIDTH + MARK_LENGTH, y + CARD_HEIGHT);
+    doc.line(x + CARD_WIDTH, y + CARD_HEIGHT, x + CARD_WIDTH, y + CARD_HEIGHT + MARK_LENGTH);
+};
+
+export const downloadPdf = (doc: jsPDF, filename = "tcg-cards.pdf") => {
     doc.save(filename);
 };
